@@ -1,0 +1,7 @@
+FROM redis:5.0
+
+COPY static/redis5.conf /data/redis.conf
+COPY static/start_redis.sh /data/start_redis.sh
+RUN chmod 744 start_redis.sh
+
+CMD sh start_redis.sh

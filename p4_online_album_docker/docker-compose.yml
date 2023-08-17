@@ -1,0 +1,42 @@
+#version不能随意修改
+version: "3"
+services: 
+#由于maven中自带jdk,所以此处不再需要java    
+#    java:
+#        build: 
+#            context: ./
+#            dockerfile: Dockerfile_java
+#        container_name: online_album_java_1
+#        ports:
+#            - "8081:8080"
+#        volumes: 
+#            - ./public:/public
+#        depends_on: 
+#            - redis
+#            - db
+#            - maven
+ 
+    db:
+        build: 
+            context: ./
+            dockerfile: Dockerfile_mysql
+        container_name: online_album_db_1
+
+    redis:
+        build:
+            context: ./
+            dockerfile: Dockerfile_redis
+        container_name: online_album_redis_1
+
+    maven:
+        build: 
+            context: ./
+            dockerfile: Dockerfile_maven
+        container_name: online_album_maven_1
+        volumes:
+            - ./public:/public
+        ports:
+            - "8081:8080"
+        depends_on: 
+            - db
+            - redis
