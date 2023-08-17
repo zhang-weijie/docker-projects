@@ -31,3 +31,90 @@ COPY static/start_redis.sh /data/start_redis.sh
 RUN chmod 744 start_redis.sh
 CMD sh start_redis.sh
 ```
+
+## send necessary info like host IP and listened port collected by 'docker inspect' to application.yml to configure the spring application
+### set_application.sh
+```shell
+#!/bin/bash
+DB_USERNAME=$1
+DB_PASSWORD=$2
+while [ -z $(docker ps | grep online_album_db_1) ]
+do
+        echo 'db initializing, waiting...'
+        sleep 1s
+done
+DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' online_album_db_1)
+
+DB_PORT=$3
+DB_IN_USE=$4
+
+while [ -z $(docker ps | grep online_album_redis_1) ]
+do
+        echo 'redis initializing, waiting...'
+        sleep 1s
+done
+REDIS_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' online_album_redis_1)
+
+cd ./public/online_album_by_springboot
+
+sed -i "s/{db_username}/${DB_USERNAME}/g" ./src/main/resources/application.yml
+sed -i "s/{db_password}/${DB_PASSWORD}/g" ./src/main/resources/application.yml
+sed -i "s/{db_host}/${DB_HOST}/g" ./src/main/resources/application.yml
+sed -i "s/{db_port}/${DB_PORT}/g" ./src/main/resources/application.yml
+sed -i "s/{db_in_use}/${DB_IN_USE}/g" ./src/main/resources/application.yml
+sed -i "s/{redis_host}/${REDIS_HOST}/g" ./src/main/resources/application.yml
+echo 'set application finished!'
+echo 'set application finished!'
+echo 'set application finished!'
+echo 'set application finished!'
+echo 'set application finished!'
+echo 'set application finished!'
+echo 'set application finished!'
+touch ../signal
+```
+
+## configure to compose docker containers
+### docker-compose.yml
+```yaml
+version: "3"
+services: 
+#maven has already a jdk in it. there is no need to generate a container for jdk 
+#    java:
+#        build: 
+#            context: ./
+#            dockerfile: Dockerfile_java
+#        container_name: online_album_java_1
+#        ports:
+#            - "8081:8080"
+#        volumes: 
+#            - ./public:/public
+#        depends_on: 
+#            - redis
+#            - db
+#            - maven
+ 
+    db:
+        build: 
+            context: ./
+            dockerfile: Dockerfile_mysql
+        container_name: online_album_db_1
+
+    redis:
+        build:
+            context: ./
+            dockerfile: Dockerfile_redis
+        container_name: online_album_redis_1
+
+    maven:
+        build: 
+            context: ./
+            dockerfile: Dockerfile_maven
+        container_name: online_album_maven_1
+        volumes:
+            - ./public:/public
+        ports:
+            - "8081:8080"
+        depends_on: 
+            - db
+            - redis
+```
