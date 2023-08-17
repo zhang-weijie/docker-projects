@@ -1,9 +1,3 @@
-/*
-SQLyog Ultimate v12.14 (64 bit)
-MySQL - 5.7.31-log : Database - master_slave_replication_db
-*********************************************************************
-*/
-
 /*!40101 SET NAMES utf8 */;
 
 /*!40101 SET SQL_MODE=''*/;
@@ -12,99 +6,147 @@ MySQL - 5.7.31-log : Database - master_slave_replication_db
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+DROP DATABASE IF EXISTS `master_slave_replication_db`;
 CREATE DATABASE /*!32312 IF NOT EXISTS*/`master_slave_replication_db` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
 USE `master_slave_replication_db`;
 
-/*Table structure for table `create_city_table` */
+/*Table structure for table `city` */
 
-DROP TABLE IF EXISTS `create_city_table`;
+DROP TABLE IF EXISTS `city`;
 
-CREATE TABLE `create_city_table` (
-  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `name` varchar(64) NOT NULL COMMENT '城市',
+CREATE TABLE `city` (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `name` varchar(64) NOT NULL COMMENT 'City',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='拍摄城市';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='city where photo taken';
 
-/*Table structure for table `create_country_table` */
+/*Data for the table `table` */
 
-DROP TABLE IF EXISTS `create_country_table`;
+insert  into city(`id`,`name`)values
 
-CREATE TABLE `create_country_table` (
-  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `name` varchar(64) NOT NULL COMMENT '国家',
+(1,'Vienna'),
+
+(2,'Salzburg'),
+
+(3,'Brussels'),
+
+(4,'Toronto'),
+
+(5,'Quebec'),
+
+(6,'Ottawa'),
+
+(7,'Copenhagen');
+
+/*Table structure for table `country` */
+
+DROP TABLE IF EXISTS country;
+
+CREATE TABLE country (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `name` varchar(64) NOT NULL COMMENT 'Country',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='拍摄国家';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='Country where photo taken';
 
-/*Table structure for table `create_date_table` */
+/*Data for the table `country` */
 
-DROP TABLE IF EXISTS `create_date_table`;
+insert  into country(`id`,`name`)values
 
-CREATE TABLE `create_date_table` (
-  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `date` date NOT NULL,
+(1,'Austria'),
+
+(2,'Belgium'),
+
+(3,'Canada'),
+
+(4,'Denmark');
+
+/*Table structure for table `author` */
+
+DROP TABLE IF EXISTS author;
+
+CREATE TABLE author (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `name` varchar(64) NOT NULL COMMENT 'Author name',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COMMENT='拍摄时间';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='Author';
 
-/*Table structure for table `credit_to_table` */
+/*Data for the table `author` */
 
-DROP TABLE IF EXISTS `credit_to_table`;
+insert  into author(`id`,`name`)values
 
-CREATE TABLE `credit_to_table` (
-  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `name` varchar(64) NOT NULL COMMENT '姓名',
+(1,'Me');
+
+/*Table structure for table `figure` */
+
+DROP TABLE IF EXISTS figure;
+
+CREATE TABLE figure (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `name` varchar(64) NOT NULL COMMENT 'Figure',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='上传者';
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='Figure of photo';
 
-/*Table structure for table `figure_table` */
+/*Data for the table `figure` */
 
-DROP TABLE IF EXISTS `figure_table`;
+insert  into figure(`id`,`name`)values
 
-CREATE TABLE `figure_table` (
-  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `name` varchar(64) NOT NULL COMMENT '名称',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='人物';
+(1,'Friends'),
 
-/*Table structure for table `photo_table` */
+(2,'Family'),
 
-DROP TABLE IF EXISTS `photo_table`;
+(3,'Animals'),
 
-CREATE TABLE `photo_table` (
-  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `credit_to_id` int(10) DEFAULT NULL COMMENT '上传者',
-  `update_time` datetime NOT NULL COMMENT '更新时间',
-  `create_date_id` int(10) DEFAULT NULL COMMENT '拍摄时间',
-  `create_country_id` int(10) DEFAULT NULL COMMENT '拍摄国家',
-  `create_city_id` int(10) DEFAULT NULL COMMENT '拍摄城市',
-  `theme_id` int(10) DEFAULT NULL COMMENT '主题',
-  `figure_id` int(10) DEFAULT NULL COMMENT '人物',
-  `desc` varchar(64) DEFAULT NULL COMMENT '描述',
-  `data` mediumblob,
+(4,'Landscape');
+
+/*Table structure for table `photo` */
+
+DROP TABLE IF EXISTS photo;
+
+CREATE TABLE photo (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `author_id` int(10) DEFAULT NULL COMMENT 'Author',
+  `country_id` int(10) DEFAULT NULL COMMENT 'Country where photo taken',
+  `city_id` int(10) DEFAULT NULL COMMENT 'City where photo taken',
+  `theme_id` int(10) DEFAULT NULL COMMENT 'Theme',
+  `figure_id` int(10) DEFAULT NULL COMMENT 'Figure',
+  `date` DATE DEFAULT NULL COMMENT 'Create Date',
+  `desc` varchar(64) DEFAULT NULL COMMENT 'Description',
+  `path` varchar(64) NOT NULL COMMENT 'Relative Path to /photo',
   PRIMARY KEY (`id`),
-  KEY `credit_to_id` (`credit_to_id`),
-  KEY `create_date_id` (`create_date_id`),
-  KEY `create_city_id` (`create_city_id`),
-  KEY `create_country_id` (`create_country_id`),
+  KEY `author_id` (author_id),
+  KEY `city_id` (city_id),
+  KEY `country_id` (country_id),
   KEY `theme_id` (`theme_id`),
   KEY `figure_id` (`figure_id`),
-  CONSTRAINT `photo_table_ibfk_2` FOREIGN KEY (`credit_to_id`) REFERENCES `credit_to_table` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `photo_table_ibfk_3` FOREIGN KEY (`create_city_id`) REFERENCES `create_city_table` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `photo_table_ibfk_4` FOREIGN KEY (`create_country_id`) REFERENCES `create_country_table` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `photo_table_ibfk_5` FOREIGN KEY (`theme_id`) REFERENCES `theme_table` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `photo_table_ibfk_6` FOREIGN KEY (`figure_id`) REFERENCES `figure_table` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `photo_table_ibfk_7` FOREIGN KEY (`create_date_id`) REFERENCES `create_date_table` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='照片';
+  CONSTRAINT `photo_table_ibfk_2` FOREIGN KEY (author_id) REFERENCES author (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `photo_table_ibfk_3` FOREIGN KEY (city_id) REFERENCES city (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `photo_table_ibfk_4` FOREIGN KEY (country_id) REFERENCES country (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `photo_table_ibfk_5` FOREIGN KEY (theme_id) REFERENCES theme (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `photo_table_ibfk_6` FOREIGN KEY (figure_id) REFERENCES figure (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='Photo';
 
-/*Table structure for table `theme_table` */
+/*Table structure for table `theme` */
 
-DROP TABLE IF EXISTS `theme_table`;
+DROP TABLE IF EXISTS theme;
 
-CREATE TABLE `theme_table` (
-  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '编号',
+CREATE TABLE theme (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `name` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='主题';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='Theme of photo';
+
+/*Data for the table `theme` */
+
+insert  into theme(`id`,`name`) values
+
+(1,'Campus'),
+
+(2,'Travel'),
+
+(3,'Food'),
+
+(4,'Entertainment');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
